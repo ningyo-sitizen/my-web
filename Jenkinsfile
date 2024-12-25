@@ -1,7 +1,9 @@
 pipeline {
     agent any
+    
     environment {
-        DOCKER_IMAGE = "my-web-app"
+        // Nama image Docker yang digunakan
+        DOCKER_IMAGE = "my-web"
     }
 
     stages {
@@ -18,6 +20,7 @@ pipeline {
                     // Build Docker image hanya untuk branch `main` atau `development`
                     if (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'development') {
                         echo "Building Docker image for ${env.BRANCH_NAME}"
+                        // Perintah untuk build Docker image
                         sh 'docker build -t $DOCKER_IMAGE .'
                     }
                 }
@@ -30,6 +33,7 @@ pipeline {
                     // Deploy aplikasi dengan Docker di Localhost
                     if (env.BRANCH_NAME == 'main' || env.BRANCH_NAME == 'development') {
                         echo "Deploying Docker container for ${env.BRANCH_NAME}"
+                        // Perintah untuk menjalankan container Nginx di localhost
                         sh 'docker run -d -p 80:80 $DOCKER_IMAGE'
                     }
                 }
@@ -39,9 +43,11 @@ pipeline {
 
     post {
         success {
+            // Pesan jika build dan deploy berhasil
             echo "Build and Deploy ${env.BRANCH_NAME} branch successful!"
         }
         failure {
+            // Pesan jika build atau deploy gagal
             echo "Build or Deploy failed for ${env.BRANCH_NAME} branch."
         }
     }
